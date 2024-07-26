@@ -1,17 +1,37 @@
+"use client";
+
+import { useState } from "react";
+import Sidebar from "@/components/Sidebar";
+import Content from "@/components/Content";
 import ButtonAccount from "@/components/ButtonAccount";
+import SEO from "@/components/common/SEO";
 
-export const dynamic = "force-dynamic";
+export default function Dashboard() {
+  const [showSidebar, setShowSidebar] = useState(false);
+  
+  const handleSidebarToggle = () => {
+    setShowSidebar(!showSidebar);
+  };
 
-// This is a private page: It's protected by the layout.js component which ensures the user is authenticated.
-// It's a server compoment which means you can fetch data (like the user profile) before the page is rendered.
-// See https://shipfa.st/docs/tutorials/private-page
-export default async function Dashboard() {
   return (
-    <main className="min-h-screen p-8 pb-24">
-      <section className="max-w-xl mx-auto space-y-8">
-        <ButtonAccount />
-        <h1 className="text-3xl md:text-4xl font-extrabold">Private Page</h1>
-      </section>
-    </main>
+    <>
+      <SEO title="Dashboard" slug="" />
+      <main className="flex min-h-screen bg-white">
+        {/* Sidebar */}
+        <Sidebar
+          onSidebarHide={() => setShowSidebar(false)}
+          showSidebar={showSidebar}
+        />
+
+        {/* Main content */}
+        <section className={`flex-1 p-8 ${showSidebar ? "ml-64" : "ml-0"} transition-all duration-300`}>
+          
+          <div className="space-y-8">
+            <h1 className="text-3xl md:text-4xl font-extrabold">Private Page</h1>
+            <Content onSidebarHide={handleSidebarToggle} />
+          </div>
+        </section>
+      </main>
+    </>
   );
 }
