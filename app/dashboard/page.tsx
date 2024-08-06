@@ -19,15 +19,13 @@ export default function Dashboard() {
       <main className="flex min-h-screen bg-white">
         {/* Sidebar */}
         <Sidebar
-          onSidebarHide={() => setShowSidebar(false)}
+          onSidebarHide={handleSidebarToggle}
           showSidebar={showSidebar}
         />
 
         {/* Main content */}
-        <section className={`flex-1 p-8 ${showSidebar ? "ml-64" : "ml-0"} transition-all duration-300`}>
-          
+        <section className={`flex-1 p-8 transition-all duration-300 ${showSidebar ? "ml-64" : "ml-0"}`}>
           <div className="space-y-8">
-            <h1 className="text-3xl md:text-4xl font-extrabold">Private Page</h1>
             <Content onSidebarHide={handleSidebarToggle} />
           </div>
         </section>

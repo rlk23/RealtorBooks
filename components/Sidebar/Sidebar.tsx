@@ -21,10 +21,11 @@ export default function Sidebar({ onSidebarHide, showSidebar }: Props) {
     from: { dashOffset: 113.113, indicatorWidth: 0, precentage: 0 },
     config: config.molasses,
   });
+
   return (
     <div
       className={clsx(
-        "fixed inset-y-0 left-0 bg-card w-full sm:w-20 xl:w-60 sm:flex flex-col z-10",
+        "fixed inset-y-0 left-0 w-full sm:w-20 xl:w-60 sm:flex flex-col z-10 bg-custom-blue",
         showSidebar ? "flex" : "hidden"
       )}
     >
@@ -42,41 +43,50 @@ export default function Sidebar({ onSidebarHide, showSidebar }: Props) {
           />
         </div>
       </div>
-      <div className="flex-grow overflow-x-hidden overflow-y-auto flex flex-col">
-        <div className="w-full p-3 h-24 sm:h-20 xl:h-24 hidden sm:block flex-shrink-0">
-          <div className="bg-sidebar-card-top rounded-xl w-full h-full flex items-center justify-start sm:justify-center xl:justify-start px-3 sm:px-0 xl:px-3">
-            <Icon path="res-react-dash-sidebar-card" className="w-9 h-9 " />
-            <div className="block sm:hidden xl:block ml-3">
-              <div className="text-sm font-bold text-white">Sales House</div>
-              <div className="text-sm">General Item</div>
-            </div>
-            <div className="block sm:hidden xl:block flex-grow" />
-            <Icon
-              path="res-react-dash-sidebar-card-select"
-              className="block sm:hidden xl:block w-5 h-5"
-            />
-          </div>
+      <div className="relative flex-grow overflow-x-hidden overflow-y-auto flex flex-col">
+        <button
+          onClick={onSidebarHide}
+          className="absolute left-full top-1/2 transform -translate-y-1/2 bg-blue-500 text-white rounded-full p-1.5 z-20"
+        >
+          &lt;|&gt;
+        </button>
+        {/* Essential Items */}
+        <div className="mt-8 mb-0 font-bold px-3 block sm:hidden xl:block">
+          Essential Items
         </div>
         {sidebarItems[0].map((i) => (
           <MenuItem
             key={i.id}
             item={i}
-            onClick={setSelected}
+            onClick={() => setSelected(i.id)}
             selected={selected}
           />
         ))}
+        {/* Additional Tools */}
         <div className="mt-8 mb-0 font-bold px-3 block sm:hidden xl:block">
-          SHORTCUTS
+          Additional Tools
         </div>
         {sidebarItems[1].map((i) => (
           <MenuItem
             key={i.id}
             item={i}
-            onClick={setSelected}
+            onClick={() => setSelected(i.id)}
             selected={selected}
           />
         ))}
         <div className="flex-grow" />
+        {/* Personal Information */}
+        <div className="mt-8 mb-0 font-bold px-3 block sm:hidden xl:block">
+          Personal Information
+        </div>
+        {sidebarItems[2].map((i) => (
+          <MenuItem
+            key={i.id}
+            item={i}
+            onClick={() => setSelected(i.id)}
+            selected={selected}
+          />
+        ))}
         <div className="w-full p-3 h-28 hidden sm:block sm:h-20 xl:h-32">
           <div
             className="rounded-xl w-full h-full px-3 sm:px-0 xl:px-3 overflow-hidden"

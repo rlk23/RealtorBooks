@@ -45,15 +45,20 @@ export const employeeData = [
   
   export const sidebarItems = [
     [
-      { id: "0", title: "Dashboard", notifications: false },
-      { id: "1", title: "Overview", notifications: false },
-      { id: "2", title: "Chat", notifications: 6 },
-      { id: "3", title: "Team", notifications: false },
+      { id: "0", title: "Dashboard", notifications: false, link: "/dashboard", iconId: "dashboard" },
+      { id: "1", title: "Overview", notifications: false, link: "/overview", iconId: "overview" },
+      { id: "2", title: "Finances", notifications: false, link: "/finances", iconId: "finances" },
+      { id: "3", title: "Files", notifications: false, link: "/files", iconId: "files" },
+      { id: "4", title: "Chat", notifications: 6, link: "/chat", iconId: "chat" },
+      { id: "5", title: "Clients", notifications: false, link: "/clients", iconId: "clients" },
     ],
     [
-      { id: "4", title: "Tasks", notifications: false },
-      { id: "5", title: "Reports", notifications: false },
-      { id: "6", title: "Settings", notifications: false },
+      { id: "6", title: "Calendar", notifications: false, link: "/calendar", iconId: "calendar" },
+      { id: "7", title: "Tasks", notifications: false, link: "/tasks", iconId: "tasks" },
+      { id: "8", title: "Inbox", notifications: false, link: "/inbox", iconId: "inbox" },
+    ],
+    [
+      { id: "9", title: "Personal Information", notifications: false, link: "/settings/personal-information", iconId: "personal-information" },
     ],
   ];
   
