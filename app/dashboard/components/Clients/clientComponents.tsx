@@ -17,7 +17,9 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
+  IconButton,
 } from '@mui/material';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 
 interface Client {
   id: number;
@@ -28,6 +30,7 @@ interface Client {
   phone: string;
   property: string;
   monthlyRent: number;
+  documents: File[]; // Add documents array for file uploads
 }
 
 export default function ClientsPage() {
@@ -41,6 +44,7 @@ export default function ClientsPage() {
       phone: '123-456-7890',
       property: 'Apartment A1',
       monthlyRent: 1200,
+      documents: [], // Initially no documents
     },
   ]);
 
@@ -52,8 +56,10 @@ export default function ClientsPage() {
     phone: '',
     property: '',
     monthlyRent: undefined,
+    documents: [], // Initialize empty array for new client documents
   });
 
+  // Handler to add a new client
   const handleAddClient = () => {
     if (
       newClient.name &&
@@ -77,7 +83,28 @@ export default function ClientsPage() {
         phone: '',
         property: '',
         monthlyRent: undefined,
+        documents: [],
       });
+    }
+  };
+
+  // Handler to handle file uploads
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>, clientId?: number) => {
+    const files = event.target.files;
+    if (files) {
+      if (clientId) {
+        // Add files to the client by ID
+        setClients((prevClients) =>
+          prevClients.map((client) =>
+            client.id === clientId
+              ? { ...client, documents: [...client.documents, ...Array.from(files)] }
+              : client
+          )
+        );
+      } else {
+        // Add files to the new client before saving
+        setNewClient({ ...newClient, documents: [...(newClient.documents || []), ...Array.from(files)] });
+      }
     }
   };
 
@@ -100,6 +127,7 @@ export default function ClientsPage() {
               <TableCell>Phone Number</TableCell>
               <TableCell>Property</TableCell>
               <TableCell>Monthly Rent ($)</TableCell>
+              <TableCell>Documents</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -113,6 +141,37 @@ export default function ClientsPage() {
                 <TableCell>{client.phone}</TableCell>
                 <TableCell>{client.property}</TableCell>
                 <TableCell>{client.monthlyRent}</TableCell>
+                <TableCell>
+                  {/* File Upload button */}
+                  <input
+                    type="file"
+                    multiple
+                    onChange={(e) => handleFileUpload(e, client.id)}
+                    hidden
+                    id={`file-upload-${client.id}`}
+                  />
+                  <label htmlFor={`file-upload-${client.id}`}>
+                    <IconButton component="span">
+                      <AttachFileIcon />
+                    </IconButton>
+                  </label>
+
+                  {/* List of uploaded documents with clickable links */}
+                  {client.documents.length > 0 && (
+                    <ul>
+                      {client.documents.map((file, index) => {
+                        const fileUrl = URL.createObjectURL(file);
+                        return (
+                          <li key={index}>
+                            <a href={fileUrl} target="_blank" rel="noopener noreferrer">
+                              {file.name}
+                            </a>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -181,6 +240,15 @@ export default function ClientsPage() {
           onChange={(e) => setNewClient({ ...newClient, monthlyRent: Number(e.target.value) })}
           fullWidth
         />
+
+        {/* File Upload for New Client */}
+        <input type="file" multiple onChange={handleFileUpload} hidden id="file-upload-new-client" />
+        <label htmlFor="file-upload-new-client">
+          <Button component="span" variant="contained" color="secondary">
+            Upload Documents
+          </Button>
+        </label>
+
         <Button variant="contained" color="primary" onClick={handleAddClient}>
           Add Client
         </Button>

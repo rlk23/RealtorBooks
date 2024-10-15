@@ -10,6 +10,7 @@ import SelectContent from './SelectContent';
 import MenuContent from './MenuContent';
 import CardAlert from './CardAlert';
 import OptionsMenu from './OptionsMenu';
+import { useSession } from 'next-auth/react'; 
 
 const drawerWidth = 240;
 
@@ -24,6 +25,15 @@ const Drawer = styled(MuiDrawer)(({ theme }) => ({
 }));
 
 export default function SideMenu() {
+  const { data: session, status } = useSession(); // Fetch session details
+
+  if (status === 'loading') {
+    return <div>Loading...</div>; // Show a loading state while session is being fetched
+  }
+
+  const userName = session?.user?.name || 'Guest'; // Use authenticated user name or default to 'Guest'
+  const userEmail = session?.user?.email || 'guest@email.com'; // Use authenticated user email or default
+
   return (
     <Drawer
       variant="permanent"
@@ -58,16 +68,16 @@ export default function SideMenu() {
       >
         <Avatar
           sizes="small"
-          alt="Riley Carter"
-          src="/static/images/avatar/7.jpg"
+          alt={userName}
+          src={session?.user?.image || '/static/images/avatar/default.jpg'} // Use user's image or fallback
           sx={{ width: 36, height: 36 }}
         />
         <Box sx={{ mr: 'auto' }}>
           <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: '16px' }}>
-            Riley Carter
+            {userName} {/* Display the user's name */}
           </Typography>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            riley@email.com
+            {userEmail} {/* Display the user's email */}
           </Typography>
         </Box>
         <OptionsMenu />
