@@ -4,6 +4,9 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/libs/next-auth";
 import config from "@/config";
+import AppTheme from "./shared-theme/AppTheme";
+import CssBaseline from "@mui/material/CssBaseline";
+
 
 // This is a server-side component to ensure the user is logged in.
 // If not, it will redirect to the login page.
@@ -21,5 +24,11 @@ export default async function LayoutPrivate({
     redirect(config.auth.loginUrl);
   }
 
-  return <>{children}</>;
+  return (
+
+
+        <div>{children}</div>
+   
+    );
+  
 }

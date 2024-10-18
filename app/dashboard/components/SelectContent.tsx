@@ -1,5 +1,5 @@
 import * as React from 'react';
-import MuiAvatar from '@mui/material/Avatar';
+import Avatar from '@mui/material/Avatar';
 import MuiListItemAvatar from '@mui/material/ListItemAvatar';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -13,7 +13,7 @@ import DevicesRoundedIcon from '@mui/icons-material/DevicesRounded';
 import SmartphoneRoundedIcon from '@mui/icons-material/SmartphoneRounded';
 import ConstructionRoundedIcon from '@mui/icons-material/ConstructionRounded';
 
-const Avatar = styled(MuiAvatar)(({ theme }) => ({
+const StyledAvatar = styled(Avatar)(({ theme }) => ({
   width: 28,
   height: 28,
   backgroundColor: theme.palette.background.paper,
@@ -59,34 +59,34 @@ export default function SelectContent() {
       <ListSubheader sx={{ pt: 0 }}>Production</ListSubheader>
       <MenuItem value="">
         <ListItemAvatar>
-          <Avatar alt="Sitemark web">
+          <StyledAvatar alt="Sitemark web">
             <DevicesRoundedIcon sx={{ fontSize: '1rem' }} />
-          </Avatar>
+          </StyledAvatar>
         </ListItemAvatar>
         <ListItemText primary="Sitemark-web" secondary="Web app" />
       </MenuItem>
       <MenuItem value={10}>
         <ListItemAvatar>
-          <Avatar alt="Sitemark App">
+          <StyledAvatar alt="Sitemark App">
             <SmartphoneRoundedIcon sx={{ fontSize: '1rem' }} />
-          </Avatar>
+          </StyledAvatar>
         </ListItemAvatar>
         <ListItemText primary="Sitemark-app" secondary="Mobile application" />
       </MenuItem>
       <MenuItem value={20}>
         <ListItemAvatar>
-          <Avatar alt="Sitemark Store">
+          <StyledAvatar alt="Sitemark Store">
             <DevicesRoundedIcon sx={{ fontSize: '1rem' }} />
-          </Avatar>
+          </StyledAvatar>
         </ListItemAvatar>
         <ListItemText primary="Sitemark-Store" secondary="Web app" />
       </MenuItem>
       <ListSubheader>Development</ListSubheader>
       <MenuItem value={30}>
         <ListItemAvatar>
-          <Avatar alt="Sitemark Admin">
+          <StyledAvatar alt="Sitemark Admin">
             <ConstructionRoundedIcon sx={{ fontSize: '1rem' }} />
-          </Avatar>
+          </StyledAvatar>
         </ListItemAvatar>
         <ListItemText primary="Sitemark-Admin" secondary="Web app" />
       </MenuItem>

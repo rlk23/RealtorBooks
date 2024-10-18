@@ -51,11 +51,11 @@ export default function SideMenu() {
           p: 1.5,
         }}
       >
-        <SelectContent />
+       {/* <SelectContent />  */}
       </Box>
       <Divider />
       <MenuContent />
-      <CardAlert />
+      {/*<CardAlert /> */}
       <Stack
         direction="row"
         sx={{
@@ -80,7 +80,7 @@ export default function SideMenu() {
             {userEmail} {/* Display the user's email */}
           </Typography>
         </Box>
-        <OptionsMenu />
+         <OptionsMenu /> 
       </Stack>
     </Drawer>
   );
