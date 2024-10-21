@@ -2,15 +2,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
-import { Container, Box } from '@mui/material';
+import { Container, Box, Button } from '@mui/material';
 import { EventInput } from '@fullcalendar/core';
 import CalendarView from './CalendarView';
 import EventButtons from './EventButtons';
+import EventDialog from './EventDialog';
 
 const CalendarComponent = () => {
   const { data: session } = useSession(); // Get the session data
   const [currentView, setCurrentView] = useState<'dayGridMonth' | 'timeGridWeek' | 'timeGridDay'>('dayGridMonth');
   const [events, setEvents] = useState<EventInput[]>([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // API functions
   const addEvent = async (newEvent: EventInput) => {
@@ -45,8 +47,6 @@ const CalendarComponent = () => {
       console.error('Error fetching events:', error);
     }
   };
-  
-
   const updateEvent = async (id: string, updatedEvent: EventInput) => {
     try {
       await axios.put(`/api/calendar/${id}`, updatedEvent);
@@ -65,8 +65,6 @@ const CalendarComponent = () => {
       console.error('Error deleting event:', error.response ? error.response.data : error.message);
     }
   };
-  
-  
 
   // Fetch events when the component mounts
   useEffect(() => {
@@ -77,16 +75,12 @@ const CalendarComponent = () => {
     setCurrentView(view);
   };
 
-  const handleDateClick = (arg: any) => {
-    const title = prompt('Enter event title:');
-    if (title) {
-      const newEvent = { title, start: arg.dateStr };
-      addEvent(newEvent); // Add the new event to the database
-    }
+  const handleDateClick = () => {
+    setIsDialogOpen(true); // Open the dialog for adding a new event
   };
 
   const handleEventClick = (clickInfo: any) => {
-    const eventId = clickInfo.event.id;
+    const eventId = clickInfo.event.id || clickInfo.event.extendedProps._id;
   
     if (eventId && window.confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'?`)) {
       deleteEvent(eventId);
@@ -94,13 +88,23 @@ const CalendarComponent = () => {
       console.error('Event ID is missing.');
     }
   };
-  
-  
+
+  const handleAddEvent = (eventData: { title: string; start: any; end?: any }) => {
+    const newEvent = {
+      title: eventData.title,
+      start: eventData.start.toISOString(),
+      end: eventData.end ? eventData.end.toISOString() : undefined,
+    };
+    addEvent(newEvent);
+  };
 
   return (
     <Container maxWidth="lg">
       <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: 2 }}>
         <EventButtons onChangeView={handleViewChange} />
+        <Button variant="contained" color="primary" onClick={() => setIsDialogOpen(true)}>
+          Add Event
+        </Button>
       </Box>
       <CalendarView
         currentView={currentView}
@@ -108,6 +112,11 @@ const CalendarComponent = () => {
         setEvents={setEvents}
         handleDateClick={handleDateClick}
         handleEventClick={handleEventClick}
+      />
+      <EventDialog
+        open={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onAddEvent={handleAddEvent}
       />
     </Container>
   );
