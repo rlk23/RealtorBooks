@@ -36,11 +36,16 @@ const CalendarComponent = () => {
   const fetchEvents = async () => {
     try {
       const response = await axios.get('/api/calendar');
-      setEvents(response.data);
+      const eventsWithIds = response.data.map((event: any) => ({
+        ...event,
+        id: event._id, // Map `_id` from MongoDB to `id` for FullCalendar
+      }));
+      setEvents(eventsWithIds);
     } catch (error) {
       console.error('Error fetching events:', error);
     }
   };
+  
 
   const updateEvent = async (id: string, updatedEvent: EventInput) => {
     try {
@@ -53,12 +58,15 @@ const CalendarComponent = () => {
 
   const deleteEvent = async (id: string) => {
     try {
+      console.log('Deleting event with ID:', id); // For debugging
       await axios.delete(`/api/calendar/${id}`);
       fetchEvents(); // Refresh the event list after deletion
     } catch (error) {
-      console.error('Error deleting event:', error);
+      console.error('Error deleting event:', error.response ? error.response.data : error.message);
     }
   };
+  
+  
 
   // Fetch events when the component mounts
   useEffect(() => {
@@ -78,11 +86,16 @@ const CalendarComponent = () => {
   };
 
   const handleEventClick = (clickInfo: any) => {
-    if (window.confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'?`)) {
-      const eventId = clickInfo.event.id;
-      deleteEvent(eventId); // Delete the event from the database
+    const eventId = clickInfo.event.id;
+  
+    if (eventId && window.confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'?`)) {
+      deleteEvent(eventId);
+    } else {
+      console.error('Event ID is missing.');
     }
   };
+  
+  
 
   return (
     <Container maxWidth="lg">

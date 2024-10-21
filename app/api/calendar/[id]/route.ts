@@ -22,8 +22,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     await connectMongo();
-    const id = params.id; // Extract the event ID from the request
-    await CalendarEvent.findByIdAndDelete(id); // Delete the event by ID
+    const id = params.id;
+    await CalendarEvent.findByIdAndDelete(id);
     return NextResponse.json({ message: 'Event deleted successfully' }, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: 'Failed to delete event', details: error.message }, { status: 400 });
