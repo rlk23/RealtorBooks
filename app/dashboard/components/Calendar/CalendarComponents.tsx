@@ -7,26 +7,28 @@ import { EventInput } from '@fullcalendar/core';
 import CalendarView from './CalendarView';
 import EventButtons from './EventButtons';
 import EventDialog from './EventDialog';
+import EditEventDialog from './EditEventDialog'; // Import the EditEventDialog
+import dayjs, { Dayjs } from 'dayjs';
 
 const CalendarComponent = () => {
   const { data: session } = useSession(); // Get the session data
   const [currentView, setCurrentView] = useState<'dayGridMonth' | 'timeGridWeek' | 'timeGridDay'>('dayGridMonth');
   const [events, setEvents] = useState<EventInput[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<any>(null);
 
   // API functions
   const addEvent = async (newEvent: EventInput) => {
     try {
-      // Ensure user is logged in before attempting to add an event
       if (!session?.user?.id) {
         console.error('User is not authenticated.');
         return;
       }
 
-      // Include userId when sending the request
       const response = await axios.post('/api/calendar', {
         ...newEvent,
-        userId: session.user.id, // Pass the userId to the backend
+        userId: session.user.id,
       });
       console.log('Event added successfully:', response.data);
       setEvents((prevEvents) => [...prevEvents, response.data]);
@@ -47,6 +49,7 @@ const CalendarComponent = () => {
       console.error('Error fetching events:', error);
     }
   };
+
   const updateEvent = async (id: string, updatedEvent: EventInput) => {
     try {
       await axios.put(`/api/calendar/${id}`, updatedEvent);
@@ -66,7 +69,6 @@ const CalendarComponent = () => {
     }
   };
 
-  // Fetch events when the component mounts
   useEffect(() => {
     fetchEvents();
   }, []);
@@ -76,14 +78,22 @@ const CalendarComponent = () => {
   };
 
   const handleDateClick = () => {
-    setIsDialogOpen(true); // Open the dialog for adding a new event
+    setIsDialogOpen(true);
   };
 
   const handleEventClick = (clickInfo: any) => {
     const eventId = clickInfo.event.id || clickInfo.event.extendedProps._id;
+    const start = dayjs(clickInfo.event.start);
+    const end = dayjs(clickInfo.event.end || start.add(1, 'hour'));
   
-    if (eventId && window.confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'?`)) {
-      deleteEvent(eventId);
+    if (eventId) {
+      setSelectedEvent({
+        id: eventId,
+        title: clickInfo.event.title,
+        start,
+        end,
+      });
+      setIsEditDialogOpen(true);
     } else {
       console.error('Event ID is missing.');
     }
@@ -96,6 +106,15 @@ const CalendarComponent = () => {
       end: eventData.end ? eventData.end.toISOString() : undefined,
     };
     addEvent(newEvent);
+  };
+
+  const handleEditEvent = (updatedEvent: { id: string; title: string; start: any; end?: any }) => {
+    const eventToUpdate = {
+      title: updatedEvent.title,
+      start: updatedEvent.start.toISOString(),
+      end: updatedEvent.end ? updatedEvent.end.toISOString() : undefined,
+    };
+    updateEvent(updatedEvent.id, eventToUpdate);
   };
 
   return (
@@ -118,6 +137,15 @@ const CalendarComponent = () => {
         onClose={() => setIsDialogOpen(false)}
         onAddEvent={handleAddEvent}
       />
+      {selectedEvent && (
+        <EditEventDialog
+          open={isEditDialogOpen}
+          event={selectedEvent}
+          onClose={() => setIsEditDialogOpen(false)}
+          onUpdateEvent={handleEditEvent}
+          onDeleteEvent={deleteEvent}
+        />
+      )}
     </Container>
   );
 };

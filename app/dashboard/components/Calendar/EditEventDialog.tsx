@@ -4,30 +4,42 @@ import { TimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 
-interface EventDialogProps {
+interface EditEventDialogProps {
   open: boolean;
+  event: { id: string; title: string; start: Dayjs; end: Dayjs };
   onClose: () => void;
-  onAddEvent: (event: { title: string; start: Dayjs; end: Dayjs }) => void;
+  onUpdateEvent: (event: { id: string; title: string; start: Dayjs; end: Dayjs }) => void;
+  onDeleteEvent: (id: string) => void;
 }
 
-const EventDialog: React.FC<EventDialogProps> = ({ open, onClose, onAddEvent }) => {
-  const [title, setTitle] = useState('');
-  const [start, setStart] = useState<Dayjs | null>(dayjs());
-  const [end, setEnd] = useState<Dayjs | null>(dayjs().add(1, 'hour')); // Default to 1 hour after the start time
+const EditEventDialog: React.FC<EditEventDialogProps> = ({
+  open,
+  event,
+  onClose,
+  onUpdateEvent,
+  onDeleteEvent,
+}) => {
+  const [title, setTitle] = useState(event.title);
+  const [start, setStart] = useState<Dayjs | null>(event.start);
+  const [end, setEnd] = useState<Dayjs | null>(event.end);
 
-  const handleAddEvent = () => {
+  const handleUpdateEvent = () => {
     if (title && start && end) {
-      onAddEvent({ title, start, end });
+      onUpdateEvent({ id: event.id, title, start, end });
       onClose();
-      setTitle('');
-      setStart(dayjs());
-      setEnd(dayjs().add(1, 'hour'));
+    }
+  };
+
+  const handleDeleteEvent = () => {
+    if (window.confirm(`Are you sure you want to delete the event "${event.title}"?`)) {
+      onDeleteEvent(event.id);
+      onClose();
     }
   };
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Add New Event</DialogTitle>
+      <DialogTitle>Edit Event</DialogTitle>
       <DialogContent>
         <TextField
           label="Event Title"
@@ -52,13 +64,16 @@ const EventDialog: React.FC<EventDialogProps> = ({ open, onClose, onAddEvent }) 
         </LocalizationProvider>
       </DialogContent>
       <DialogActions>
+        <Button onClick={handleDeleteEvent} color="secondary">
+          Delete
+        </Button>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleAddEvent} variant="contained" color="primary">
-          Add Event
+        <Button onClick={handleUpdateEvent} variant="contained" color="primary">
+          Save
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default EventDialog;
+export default EditEventDialog;
